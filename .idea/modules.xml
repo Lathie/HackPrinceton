@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/FacedIn.iml" filepath="$PROJECT_DIR$/FacedIn.iml" />
       <module fileurl="file://$PROJECT_DIR$/HackPrinceton.iml" filepath="$PROJECT_DIR$/HackPrinceton.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/libs.iml" filepath="$PROJECT_DIR$/libs/libs.iml" />

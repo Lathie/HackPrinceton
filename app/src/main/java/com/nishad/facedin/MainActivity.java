@@ -16,6 +16,11 @@ import android.view.MenuItem;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import android.app.*;
 import android.content.*;
@@ -29,6 +34,7 @@ import android.provider.*;
 
 import com.microsoft.projectoxford.face.*;
 import com.microsoft.projectoxford.face.contract.*;
+import com.microsoft.projectoxford.face.rest.RESTException;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -38,7 +44,10 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    private String[] Stackathon = {"https://media.licdn.com/media/p/2/005/07d/3c2/05ca0a4.jpg"};
+    private final String[] Stackathon = {"https://media.licdn.com/media/p/2/005/07d/3c2/05ca0a4.jpg", "https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAR6AAAAJDJlZDkwYjlkLTc3NzEtNDY0My1hNzc2LTI1YjYwNWFlMWQzMg.jpg", "https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAcIAAAAJDRmZTliODRmLTJjODYtNDMzOC04MDRiLTMxNWVlYjc4MzVhOA.jpg"};
+
+    private final String[] StackathonNames = {"Pablo", "Victor", "Pranay"};
+
 
     private final int PICK_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -46,6 +55,8 @@ public class MainActivity extends AppCompatActivity
     private ProgressDialog detectionProgressDialog;
     private FaceServiceClient faceServiceClient =
             new FaceServiceClient("dbbac76483ec4b6ba3673010a0efeb7b");
+
+    private Initializer i = new Initializer();
 
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
@@ -108,8 +119,73 @@ public class MainActivity extends AppCompatActivity
 
         detectionProgressDialog = new ProgressDialog(this);
 
-        new fetch().execute("https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=77i229lw0svb65&redirect_uri=https%3A%2F%2Fgoogle.com&state=987654321&scope=r_basicprofile");
+        // new fetch().execute("https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=77i229lw0svb65&redirect_uri=https%3A%2F%2Fgoogle.com&state=987654321&scope=r_basicprofile");
 //        Log.d("LinkedIn Response", HTTPHelper.GET("https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=77i229lw0svb65&redirect_uri=https%3A%2F%2Fgoogle.com&state=987654321&scope=r_basicprofile"));
+
+        new initializer().execute(Stackathon);
+    }
+
+    private class initializer extends AsyncTask<String, Void, Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                final FaceServiceClient f = faceServiceClient;
+
+//                final String URL = "https://scontent-atl3-1.xx.fbcdn.net/hphotos-xap1/v/t1.0-9/65506_751590428221638_9166919660993343404_n.jpg?oh=177ff93d762e39d185f1525c1edacb28&oe=56BEF95D";
+
+//                Face[] friend1faces = new Face[10];
+
+                for (int i = 0; i < params.length; i++){
+
+
+                    final String URL = params[i];
+
+                    Log.d("URL", "doInBackground() returned: " + URL);
+
+                    Face[] friend1faces = f.detect(URL, false, false, false, false);
+                    UUID myFaces[] = {friend1faces[0].faceId};
+                    f.createPerson("1", myFaces, StackathonNames[i], "");
+                    Log.d("friend", "Create Person");
+
+                }
+
+
+//        final FaceServiceClient f = new FaceServiceClient("54f644646cd5493aa460a719136482ac");
+//        Log.d("FaceServiceClient", "create f");
+
+//                Face[] friend1faces = f.detect(URL, false, false, false, false);
+
+//                Log.d("friend1faces", "Detect my face");
+
+//                f.createPersonGroup("1", "Hack Princeton Group", "Sample data");
+//                Log.d("createPersonGroup", "create testgroup");
+
+//                UUID myFaces[] = {friend1faces[0].faceId};
+//                Log.d("myFaces[]", "init myfaces[]");
+
+//                CreatePersonResult friend1;
+//                friend1 = f.createPerson("1", myFaces, "Victor", "Thats me!");
+//                Log.d("friend1", "Create Person");
+
+                TrainingStatus ts = f.trainPersonGroup("1");
+//
+//                while(ts.status.equals("running")){
+//                    Log.d("Inception", ts.status);
+//                    TimeUnit.SECONDS.sleep(2);
+//                }
+
+//                Log.d("initializer", "doInBackground() returned: " + ts.status);
+            }
+            catch(RESTException e){
+                e.printStackTrace();
+            }
+//            catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+
+            return null;
+        }
     }
 
     private class fetch extends AsyncTask<String, Void, String> {
@@ -175,23 +251,31 @@ public class MainActivity extends AppCompatActivity
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        AsyncTask<InputStream, String, Face[]> detectTask =
-                new AsyncTask<InputStream, String, Face[]>() {
+
+        AsyncTask<InputStream, String, IdentifyResult[]> detectTask =
+                new AsyncTask<InputStream, String, IdentifyResult[]>() {
                     @Override
-                    protected Face[] doInBackground(InputStream... params) {
+                    protected IdentifyResult[] doInBackground(InputStream... params) {
                         try {
                             publishProgress("Detecting...");
                             Face[] result = faceServiceClient.detect(
                                     params[0], false, false, false, false);
-                            if (result == null)
-                            {
-                                publishProgress("Detection Finished. Nothing detected");
-                                return null;
-                            }
-                            publishProgress(
-                                    String.format("Detection Finished. %d face(s) detected",
-                                            result.length));
-                            return result;
+
+                            UUID[] thisImage = {result[0].faceId};
+
+                            Log.d("FaceID", "doInBackground() returned: " + thisImage[0]);
+
+                            return faceServiceClient.identity("1", thisImage, 1);
+//
+//                            if (result == null)
+//                            {
+//                                publishProgress("Detection Finished. Nothing detected");
+//                                return null;
+//                            }
+//                            publishProgress(
+//                                    String.format("Detection Finished. %d face(s) detected",
+//                                            result.length));
+//                            return result;
                         } catch (Exception e) {
                             publishProgress("Detection failed");
                             return null;
@@ -208,22 +292,44 @@ public class MainActivity extends AppCompatActivity
 
                     }
                     @Override
-                    protected void onPostExecute(Face[] result) {
+                    protected void onPostExecute(IdentifyResult[] result) {
                         detectionProgressDialog.dismiss();
 
                         Log.d("onPostExec", "onPostExecute() returned: " + result);
 
+
                         if (result == null) return;
-                        ImageView imageView = (ImageView)findViewById(R.id.imageView1);
 
-
-
-                        imageView.setImageBitmap(drawFaceRectanglesOnBitmap(imageBitmap, result));
-                        imageBitmap.recycle();
+                        new GetPersonInfoTask().execute(result);
+//                        ImageView imageView = (ImageView)findViewById(R.id.imageView1);
+//
+//
+//
+//                        imageView.setImageBitmap(drawFaceRectanglesOnBitmap(imageBitmap, result));
+//                        imageBitmap.recycle();
 
                     }
                 };
         detectTask.execute(inputStream);
+    }
+
+    private class GetPersonInfoTask extends AsyncTask<IdentifyResult[], Void, Person> {
+
+        @Override
+        protected void onPostExecute(Person person) {
+            super.onPostExecute(person);
+            Log.d("Identify", "onPostExecute() returned: " + person.name);
+        }
+
+        @Override
+        protected Person doInBackground(IdentifyResult[]... params) {
+            try {
+                return faceServiceClient.getPerson("1", params[0][0].candidates.get(0).personId);
+            } catch (RESTException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     private static Bitmap drawFaceRectanglesOnBitmap(Bitmap originalBitmap, Face[] faces) {
