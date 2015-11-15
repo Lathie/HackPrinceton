@@ -29,10 +29,16 @@ import android.provider.*;
 
 import com.microsoft.projectoxford.face.*;
 import com.microsoft.projectoxford.face.contract.*;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    private String[] Stackathon = {"https://media.licdn.com/media/p/2/005/07d/3c2/05ca0a4.jpg"};
 
     private final int PICK_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -101,7 +107,42 @@ public class MainActivity extends AppCompatActivity
         });
 
         detectionProgressDialog = new ProgressDialog(this);
+
+        new fetch().execute("https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=77i229lw0svb65&redirect_uri=https%3A%2F%2Fgoogle.com&state=987654321&scope=r_basicprofile");
+//        Log.d("LinkedIn Response", HTTPHelper.GET("https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=77i229lw0svb65&redirect_uri=https%3A%2F%2Fgoogle.com&state=987654321&scope=r_basicprofile"));
     }
+
+    private class fetch extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Log.d("LinkedIn Response", s);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String result = "";
+            try {
+
+                // create HttpClient
+                OkHttpClient client = new OkHttpClient();
+
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                return response.body().string();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
