@@ -3,6 +3,7 @@ package com.nishad.facedin;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -44,9 +45,81 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    private final String[] Stackathon = {"https://media.licdn.com/media/p/2/005/07d/3c2/05ca0a4.jpg", "https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAR6AAAAJDJlZDkwYjlkLTc3NzEtNDY0My1hNzc2LTI1YjYwNWFlMWQzMg.jpg", "https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAcIAAAAJDRmZTliODRmLTJjODYtNDMzOC04MDRiLTMxNWVlYjc4MzVhOA.jpg"};
+    private String personName;
+    private String personInfo;
 
-    private final String[] StackathonNames = {"Pablo", "Victor", "Pranay"};
+    private final String[] Stackathon = {
+            "https://media.licdn.com/media/p/2/005/07d/3c2/05ca0a4.jpg",
+            "https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAR6AAAAJDJlZDkwYjlkLTc3NzEtNDY0My1hNzc2LTI1YjYwNWFlMWQzMg.jpg",
+            "https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAcIAAAAJDRmZTliODRmLTJjODYtNDMzOC04MDRiLTMxNWVlYjc4MzVhOA.jpg",
+            "https://media.licdn.com/media/p/2/000/1b0/2a0/2b55436.jpg",
+            "https://media.licdn.com/media/AAEAAQAAAAAAAANBAAAAJDRkMGQxNTM3LWE3ZDktNDM4NC1hMDhkLTY1OWUxNTA2Y2JhOA.jpg",
+            "https://media.licdn.com/media/p/3/000/276/109/2a1f78c.jpg", "https://media.licdn.com/media/p/2/005/08b/3df/3015779.jpg"};
+
+    private final String[] StackathonNames = {
+            "Pablo Pera Mira"
+                    + "\n" +
+                    "(https://www.linkedin.com/in/pablopera)",
+            "Victor Niu"+
+                    "\n"+
+                    "(https://www.linkedin.com/in/victorniu)",
+            "Pranay Prakash"+
+                    "\n"+
+                    "(https://www.linkedin.com/in/pranaygp)",
+            "William Martin" +
+                    "\n" +
+                    "(https://www.linkedin.com/in/awmartin)",
+            "Karim Atiyeh" +
+                    "\n" +
+                    "(https://www.linkedin.com/in/karimatiyeh)",
+            "Scott Harley"+
+                    "\n" +
+                    "(https://www.linkedin.com/in/scotthartley)",
+            "Steven Greenberg" +
+                    "\n" +
+                    "(https://www.linkedin.com/in/steven-greenberg-5363b232)"};
+
+    private final String[] StackathonDescriptions = {
+            "Co-founder of Androidsx. We develop and launch Android applications. We have launched more than 10 consumer apps that have reached over 15 million users." +
+                "\n" +
+                    "Summary of my previous positions:\n" +
+                    "- Mobile lead at Pixable Inc, NY.\n" +
+                    "- Backend engineer at CERN, Geneva.\n" +
+                    "- Front-end engineer at Google, Zurich.\n" +
+                    "- Researcher in Image Analysis in the UPV, Valencia.\n" +
+                    "\n" +
+                    "Based in NY.",
+            "I like trains, and sleep.\n" +
+                    "\n" +
+                    "Also programming in moderation.",
+            "I love coding.\n" +
+                    "\n" +
+                    "and HackPrinceton",
+            "I build high-performance business tools, tailor processes for design and product innovation, develop product strategies for emerging technologies and markets, evangelize creative leadership and technology education.\n" +
+                    "\n" +
+                    "Website — http://anomalus.com\n" +
+                    "Twitter – http://twitter.com/awmartin\n" +
+                    "Code – http://github.com/awmartin",
+            "Karim leads product development and technical strategy at Paribus Co. Before that, he worked on everything from natural language processing to computer vision, advanced hardware design and machine learning. He received his BA in Electrical and Computer Engineering and MS in Computer Science from Harvard University where he was a Siebel Scholar. Born and raised in Beirut, he knows how to bargain prices down and fights to get his friends the very best deals.\n" +
+                    "\n" +
+                    "Previously an Associate in Oliver Wyman's Corporate & Institutional Banking (CIB) practice, advising Investment Banks, Private Equity firms and other Financial Services institutions on a range of strategic issues including market entry, regulatory strategy, balance sheet optimization, organizational reengineering and competitive benchmarking.",
+            "Venture Partner @ Metamorphic Ventures\n" +
+                    "Columnist @ Inc. Magazine\n" +
+                    "Startup Investor & Advisor @ Spire (raised $80M), Klink (acquired by ThinkingPhones), AirPR (acquired), Kimono Labs, CoverWallet, Hattery (acquired by Google & 1776), Impraise, 123.AI, Caliber\n" +
+                    "Term Member @ Council on Foreign Relations\n" +
+                    "Adventurer @ 70+ countries and counting\n" +
+                    "\n" +
+                    "Experience: \n" +
+                    "Presidential Innovation Fellow @ The White House\n" +
+                    "Partner @ Mohr Davidow Ventures\n" +
+                    "Product & Operations @ Google & Facebook\n" +
+                    "Research @ Harvard, Columbia, & Stanford\n" +
+                    "Author @ MIT Press, Forbes, Foreign Policy, etc.\n" +
+                    "\n" +
+                    "Experienced entrepreneurship and VC speaker for Google.org (Tanzania), U.S. State Department (Senegal, Algeria, Turkey, Kenya), MIT Enterprise Forum (Turkey), MIT Technology Review (Mexico), Growth Days (Sweden), Global Entrepreneurship Summit (Malaysia, Kenya), DigiTalk (Bulgaria), at Columbia, White House, World Bank, IFC, and U.S. Senate Foreign Relations briefing (DC).\n" +
+                    "\n" +
+                    "6x Marathoner and Ironman 70.3 finisher",
+            "No Summary"};
 
 
     private final int PICK_IMAGE = 1;
@@ -104,7 +177,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         FloatingActionButton button1 = (FloatingActionButton)findViewById(R.id.button1);
+
+
+
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,7 +222,7 @@ public class MainActivity extends AppCompatActivity
 
                     Face[] friend1faces = f.detect(URL, false, false, false, false);
                     UUID myFaces[] = {friend1faces[0].faceId};
-                    f.createPerson("1", myFaces, StackathonNames[i], "");
+                    f.createPerson("1", myFaces, StackathonNames[i], StackathonDescriptions[i]);
                     Log.d("friend", "Create Person");
 
                 }
@@ -318,7 +395,24 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Person person) {
             super.onPostExecute(person);
-            Log.d("Identify", "onPostExecute() returned: " + person.name);
+//            Log.d("Identify", "onPostExecute() returned: " + person.name + person.userData);
+
+            personName = person.name;
+            personInfo = person.userData;
+
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView nameText = (TextView) findViewById(R.id.nameText);
+                    nameText.setMovementMethod(LinkMovementMethod.getInstance());
+                    TextView infoText = (TextView) findViewById(R.id.infoText);
+
+                    nameText.setText(personName);
+                    infoText.setText(personInfo);
+                }
+            });
+
         }
 
         @Override
